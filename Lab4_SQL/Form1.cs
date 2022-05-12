@@ -21,7 +21,7 @@ namespace Lab4_SQL
         public Form1()
         {
             this.Load += new EventHandler(Form1_Load);
-            InitializeComponent();
+            InitializeComponent();                  
         }
 
         private void Form1_Load(System.Object sender, System.EventArgs e)
@@ -58,12 +58,12 @@ namespace Lab4_SQL
             sqlConnection.Open();
 
             string sqUpdateBrigadesExpretion = "UPDATE Brigades SET WorkersAmmount = WorkersAmmount - 10";
-            string sqlSelectCustomers = "SELECT * FROM Brigades";
+            string sqlSelectBrigades = "SELECT * FROM Brigades";
 
             SqlCommand sqlCommand = new SqlCommand(sqUpdateBrigadesExpretion, sqlConnection);
             sqlCommand.ExecuteNonQuery();
 
-            adapter = new SqlDataAdapter(sqlSelectCustomers, connectionString);
+            adapter = new SqlDataAdapter(sqlSelectBrigades, connectionString);
             ds = new DataSet();
 
             adapter.Fill(ds);
@@ -159,7 +159,7 @@ namespace Lab4_SQL
             sqlConnection.Open();
 
             string sqlBrigadesTransactionExpretion = "UPDATE Brigades SET WorkersAmmount = WorkersAmmount + 10";
-            string sqlSelectCustomers = "SELECT * FROM Brigades";
+            string sqlSelectBrigades = "SELECT * FROM Brigades";
 
             SqlTransaction sqlTransaction = sqlConnection.BeginTransaction();
             SqlCommand sqlCommand = new SqlCommand(sqlBrigadesTransactionExpretion, sqlConnection);
@@ -180,7 +180,7 @@ namespace Lab4_SQL
                 sqlTransaction.Rollback();
             }
 
-            adapter = new SqlDataAdapter(sqlSelectCustomers, connectionString);
+            adapter = new SqlDataAdapter(sqlSelectBrigades, connectionString);
             ds = new DataSet();
 
             adapter.Fill(ds);
