@@ -109,8 +109,6 @@ namespace Lab4_SQL
                 sqTransaction.Rollback();
             }
 
-           
-
             sqlConnection.Close();
         }
 
