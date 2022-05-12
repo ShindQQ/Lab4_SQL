@@ -76,17 +76,40 @@ namespace Lab4_SQL
         {
             sqlConnection.Open();
 
-            string sqlDeleteCustomersExpretion = "DELETE FROM Customers WHERE PassportID = 6";
             string sqlSelectCustomers = "SELECT * FROM CUSTOMERS";
 
-            SqlCommand sqlCommand = new SqlCommand(sqlDeleteCustomersExpretion, sqlConnection);
-            sqlCommand.ExecuteNonQuery();
-
-            adapter = new SqlDataAdapter(sqlSelectCustomers, connectionString);
+            SqlTransaction sqTransaction = sqlConnection.BeginTransaction();
             ds = new DataSet();
-
+            SqlCommand sqlCommand = new SqlCommand(sqlSelectCustomers, sqlConnection, sqTransaction);
+            adapter.SelectCommand = sqlCommand;
+            
             adapter.Fill(ds);
-            dataGridView.DataSource = ds.Tables[0];
+            DataTable dataTable = ds.Tables[0];
+
+            for (int i = 0; i < dataTable.Rows.Count; i++)
+            {
+                if ((int)dataTable.Rows[i]["PassportID"] == 6)
+                {
+                    dataTable.Rows[i].Delete();
+                }
+            }
+
+            try
+            {
+                SqlCommandBuilder commandBuilder = new SqlCommandBuilder(adapter);
+                adapter.Update(ds);
+                ds.Clear();
+                adapter.Fill(ds);
+                dataGridView.DataSource = ds.Tables[0];
+                throw new Exception($"Sql expression (Delete): {commandBuilder.GetUpdateCommand().CommandText}\n\nRollback changes");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                sqTransaction.Rollback();
+            }
+
+           
 
             sqlConnection.Close();
         }
